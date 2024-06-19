@@ -1,9 +1,6 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.8' // Puedes usar cualquier versión de Python que necesites
-        }
-    }
+    agent any
+
     stages {
         stage('Checkout') {
             steps {
@@ -12,18 +9,31 @@ pipeline {
         }
         stage('Train Model') {
             steps {
-                sh 'python train_model.py'
+                script {
+                    docker.image('python:3.8').inside {
+                        sh 'python train_model.py'
+                    }
+                }
             }
         }
         stage('Validate Model') {
             steps {
-                sh 'python validate_model.py'
+                script {
+                    docker.image('python:3.8').inside {
+                        sh 'python validate_model.py'
+                    }
+                }
             }
         }
         stage('Deploy Model') {
             steps {
-                sh 'python deploy_model.py'
+                script {
+                    docker.image('python:3.8').inside {
+                        sh 'python deploy_model.py'
+                    }
+                }
             }
         }
     }
 }
+
